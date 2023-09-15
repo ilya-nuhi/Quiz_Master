@@ -15,8 +15,8 @@ MonoBehaviour:
   question: 'What is the correct syntax for creating a new integer variable with
     an initial value of 12? '
   answers:
-  - 
-  - 
-  - 
-  - 
+  - int num = 12;
+  - Int num = "12";
+  - Int num = 12;
+  - int num = "12";
   correctAnswerIndex: 0
