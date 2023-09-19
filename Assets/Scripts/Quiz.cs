@@ -50,16 +50,19 @@ public class Quiz : MonoBehaviour
         
         timerImage.fillAmount = timer.fillFraction;
         if(timer.loadNextQuestion){
+            if (progressBar.value == progressBar.maxValue)
+            {
+                isComplete = true;
+                return;
+            }
+
             hasAnsweredEarly = false;
             GetNextQuestion();
             timer.loadNextQuestion=false;
         }
-        else if(!hasAnsweredEarly && !timer.insAnsweringQuestion && currentQuestion != null ){
+        else if(!hasAnsweredEarly && !timer.insAnsweringQuestion ){
             DisplayAnswer(-1);
             SetButtonState(false);
-            if(progressBar.value == progressBar.maxValue){
-                isComplete = true;
-            }
         }
         
         

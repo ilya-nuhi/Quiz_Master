@@ -11,28 +11,42 @@ public class GameManager : MonoBehaviour
     [SerializeField] UnityEngine.UI.Slider slider;
     Timer timer;
 
+    GameObject startScene;
+
     void Awake() {
         timer = FindObjectOfType<Timer>();
         quiz = FindObjectOfType<Quiz>();
-        endScreen = FindAnyObjectByType<EndScreen>();
+        endScreen = FindObjectOfType<EndScreen>();
+        startScene = GameObject.Find("StartScreenCanvas");
     }
 
     void Start()
     {
-        quiz.gameObject.SetActive(true);
+        timer.gameObject.SetActive(false);
+        startScene.SetActive(true);
+        quiz.gameObject.SetActive(false);
         endScreen.gameObject.SetActive(false);
     }
 
     void Update()
     {
         if(quiz.isComplete && timer.loadNextQuestion){
+            timer.gameObject.SetActive(false);
+            startScene.SetActive(false);
             quiz.gameObject.SetActive(false);
             endScreen.gameObject.SetActive(true);
             endScreen.ShowFinalScore();
-        }    
+        }
     }
 
     public void OnReplayLevel(){
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
+    public void OnStartQuiz(){
+        timer.gameObject.SetActive(true);
+        startScene.SetActive(false);
+        quiz.gameObject.SetActive(true);
+        endScreen.gameObject.SetActive(false);
     }
 }
