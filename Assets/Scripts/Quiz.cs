@@ -6,6 +6,7 @@ using UnityEngine.UI;
 using TMPro;
 using Microsoft.Unity.VisualStudio.Editor;
 using System;
+using UnityEngine.UIElements;
 
 public class Quiz : MonoBehaviour
 {
@@ -26,25 +27,41 @@ public class Quiz : MonoBehaviour
     [Header("Timer")]
     [SerializeField] UnityEngine.UI.Image timerImage;
     Timer timer;
+
+    [Header("Scoring")]
+    [SerializeField] TextMeshProUGUI scoreText;
+    ScoreKeeper scoreKeeper;
+
+    [Header("ProgressBar")]
+
+    [SerializeField] UnityEngine.UI.Slider progressBar;
     
-    void Start()
+
+    public bool isComplete;
+    void Awake()
     {
         timer = FindObjectOfType<Timer>();
+        scoreKeeper = FindObjectOfType<ScoreKeeper>();
+        progressBar.maxValue = questions.Count;
+        progressBar.value = 0;
     }
 
     void Update() {
-        if(questions.Count>0){
-            timerImage.fillAmount = timer.fillFraction;
-            if(timer.loadNextQuestion){
-                hasAnsweredEarly = false;
-                GetNextQuestion();
-                timer.loadNextQuestion=false;
-            }
-            else if(!hasAnsweredEarly && !timer.insAnsweringQuestion && currentQuestion != null){
-                DisplayAnswer(-1);
-                SetButtonState(false);
+        
+        timerImage.fillAmount = timer.fillFraction;
+        if(timer.loadNextQuestion){
+            hasAnsweredEarly = false;
+            GetNextQuestion();
+            timer.loadNextQuestion=false;
+        }
+        else if(!hasAnsweredEarly && !timer.insAnsweringQuestion && currentQuestion != null ){
+            DisplayAnswer(-1);
+            SetButtonState(false);
+            if(progressBar.value == progressBar.maxValue){
+                isComplete = true;
             }
         }
+        
         
     }
 
@@ -55,12 +72,15 @@ public class Quiz : MonoBehaviour
             questionText.text = "Corrrect!";
             buttonImage = answerbuttons[index].GetComponent<UnityEngine.UI.Image>();
             buttonImage.sprite = correctAnswerSprite;
+            scoreKeeper.IncrementCorrectAnswers();
+            
         }
         else{
             questionText.text = "Sorry, the correct answer was:\n" + currentQuestion.GetAnswer(correctAnswerIndex);
             buttonImage = answerbuttons[correctAnswerIndex].GetComponent<UnityEngine.UI.Image>();
             buttonImage.sprite = correctAnswerSprite;
         }
+        scoreText.text = "Score: " + scoreKeeper.CalculateScore() + "%";
     }
 
     public void onAnswerSelected(int index){
@@ -68,7 +88,10 @@ public class Quiz : MonoBehaviour
         DisplayAnswer(index);
         SetButtonState(false);
         timer.CancelTimer();
-
+        if(progressBar.value == progressBar.maxValue){
+            isComplete = true;
+        }
+        
     }
 
     void GetNextQuestion(){
@@ -76,6 +99,8 @@ public class Quiz : MonoBehaviour
         SetDefaultButtonSprites();
         GetRandomQuestion();
         DisplayQuestion();
+        progressBar.value++;
+        scoreKeeper.IncrementQuestionsSeen();
     }
 
     void GetRandomQuestion()
@@ -107,7 +132,7 @@ public class Quiz : MonoBehaviour
 
     void SetButtonState(bool state){
         for(int i = 0; i< answerbuttons.Length; i++){
-            Button button = answerbuttons[i].GetComponent<Button>();
+            UnityEngine.UI.Button button = answerbuttons[i].GetComponent<UnityEngine.UI.Button>();
             button.interactable = state;
         }
     }
