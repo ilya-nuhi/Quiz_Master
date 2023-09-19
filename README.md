@@ -1,7 +1,7 @@
 # Quiz_Master
 This is my third game.  
 It is a classic quiz game.  
-
+  
 ![alt text](https://github.com/ilya-nuhi/Quiz_Master/blob/main/Quiz_Master.png?raw=true)
 
 Mechanics in this game:  
