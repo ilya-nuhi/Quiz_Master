@@ -4,7 +4,6 @@ using UnityEngine;
 using UnityEngine.UI;
 
 using TMPro;
-using Microsoft.Unity.VisualStudio.Editor;
 using System;
 using UnityEngine.UIElements;
 
